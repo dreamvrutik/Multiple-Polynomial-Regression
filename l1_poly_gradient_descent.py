@@ -20,7 +20,7 @@ from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 
 
-class PolyGradientDescent:
+class L1PolyGradientDescent:
 
     def __init__(self,degree):
         self.dataset = pd.read_csv('./data/normalized_dataset.csv')
@@ -38,6 +38,7 @@ class PolyGradientDescent:
         self.terms=[]
         self.degree=degree
         self.alpha=0.000003
+        self.la=0.001
 
 
     def sumOfError(self):
@@ -48,13 +49,18 @@ class PolyGradientDescent:
         for i in range(len(self.X0_train)):
             ss=-self.Y_train[i]
             j=0
+            tt=0
+            for k in self.w:
+                tt+=abs(k)
+            tt*=self.la
+            ss+=tt
             for k in self.terms:
                ss+=self.w[j]*(pow(1,k[0])*pow(self.X0_train[i],k[1])*pow(self.X1_train[i],k[2]))
                j+=1
+            
             for h in range(len(retw)):
                 k=self.terms[h]
-                retw[h]+=ss*(pow(1,k[0])*pow(self.X0_train[i],k[1])*pow(self.X1_train[i],k[2]))
-        
+                retw[h]+=ss*(pow(1,k[0])*pow(self.X0_train[i],k[1])*pow(self.X1_train[i],k[2]))+(self.la*np.sign(self.w[h]))
         return retw
 
 
@@ -90,7 +96,7 @@ class PolyGradientDescent:
 
 
 if __name__ == '__main__':
-    gd=PolyGradientDescent(2)
+    gd=L1PolyGradientDescent(2)
     gd.poly_features()
     print(gd.terms)
     gd.trainModel()
