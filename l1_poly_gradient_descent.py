@@ -94,25 +94,13 @@ class L1PolyGradientDescent:
 
 
 if __name__ == '__main__':
-    lam=0.001
-    x=[]
-    y=[]
-    while lam<=0.01:
-        gd=L1PolyGradientDescent(6)
-        gd.la=lam
-        gd.poly_features()
-        print(gd.la,len(gd.w),len(gd.terms))
-        x.append(gd.la)
-        gd.trainModel()
-        Y_test=list(gd.Y_test)
-        Y_pred=gd.getPredictedValues()
-        print("Parameters found by Gradient Descent are: \n", gd.w)
-        print("\nRMSE Error: ", RMSE().rmse(Y_pred, Y_test))
-        y.append(RMSE().R2_SCORE().rmse(Y_pred, Y_test))
-        lam+=0.001
-    plt.plot(x,y)
-    plt.xlabel("Lambda")
-    plt.ylabel("RMSE")
-    plt.title("L1 Linear Gradient Descent")
-    plt.show()
-    #print("R-square Score: ", r2_score(Y_pred, Y_test))
+
+    gd=L1PolyGradientDescent(6)
+    gd.poly_features()
+    print(gd.la,len(gd.w),len(gd.terms))
+    gd.trainModel()
+    Y_test=list(gd.Y_test)
+    Y_pred=gd.getPredictedValues()
+    print("Parameters found by Gradient Descent are: \n", gd.w)
+    print("\nRMSE Error: ", RMSE().rmse(Y_pred, Y_test))
+    print("R-square Score: ", R2_SCORE().r2_score(Y_test,Y_pred))
