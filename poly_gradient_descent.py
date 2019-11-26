@@ -37,11 +37,12 @@ class PolyGradientDescent:
         self.w=[]
         self.terms=[]
         self.degree=degree
-        self.alpha=0.000003
+        self.alpha=0.0000025
 
 
     def sumOfError(self):
         retw=[]
+        err = 0
         for i in range(len(self.w)):
             retw.append(0)
             
@@ -49,22 +50,28 @@ class PolyGradientDescent:
             ss=-self.Y_train[i]
             j=0
             for k in self.terms:
-               ss+=self.w[j]*(pow(1,k[0])*pow(self.X0_train[i],k[1])*pow(self.X1_train[i],k[2]))
+               ss+=self.w[j]*((self.X0_train[i] ** k[1])*(self.X1_train[i] ** k[2]))
                j+=1
             for h in range(len(retw)):
                 k=self.terms[h]
-                retw[h]+=ss*(pow(1,k[0])*pow(self.X0_train[i],k[1])*pow(self.X1_train[i],k[2]))
-        
-        return retw
+                retw[h]+=ss*((self.X0_train[i] ** k[1])*(self.X1_train[i] ** k[2]))
+            err += ss ** 2
+            
+        return err, retw
 
 
     def trainModel(self):
+        prev = 10 ** 9
         for j in range(20):
-            retw=self.sumOfError()
-            print(j)
+            err, retw=self.sumOfError()
             for i in range(len(self.w)):
                 self.w[i]=self.w[i]-(self.alpha*retw[i])
             
+            # if(j % 10 == 0 and j > 0):
+            print(j, err)
+            if abs(err - prev) < 10**(-5):
+                break
+            prev = err
             
     def getPredictedValues(self):
         Y_pred=[]
@@ -90,12 +97,19 @@ class PolyGradientDescent:
 
 
 if __name__ == '__main__':
-    gd=PolyGradientDescent(2)
+    gd=PolyGradientDescent(4)
     gd.poly_features()
-    print(gd.terms)
     gd.trainModel()
     Y_test=list(gd.Y_test)
     Y_pred=gd.getPredictedValues()
     print("Parameters found by Gradient Descent are: \n", gd.w)
     print("\nRMSE Error: ", RMSE().rmse(Y_pred, Y_test))
     #print("R-square Score: ", r2_score(Y_pred, Y_test))
+
+
+# 1 0.12934996286254838
+# 2 0.12688143728667764 0.000003 500
+# 2 0.12673978328914387 0.0000035 500
+# 3 0.12846968751695378
+# 4 0.12638796501743874  0.0000031 100
+# 5 0.13.....

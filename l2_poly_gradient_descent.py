@@ -96,7 +96,7 @@ class L2PolyGradientDescent:
 
 
 if __name__ == '__main__':
-    gd=L2PolyGradientDescent(2)
+    gd=L2PolyGradientDescent(6)
     gd.poly_features()
     print(gd.terms)
     gd.trainModel()
