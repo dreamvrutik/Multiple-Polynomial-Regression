@@ -44,7 +44,7 @@ class PolyGradientDescent:
         retw=[]
         for i in range(len(self.w)):
             retw.append(0)
-            
+
         for i in range(len(self.X0_train)):
             ss=-self.Y_train[i]
             j=0
@@ -54,18 +54,29 @@ class PolyGradientDescent:
             for h in range(len(retw)):
                 k=self.terms[h]
                 retw[h]+=ss*(pow(1,k[0])*pow(self.X0_train[i],k[1])*pow(self.X1_train[i],k[2]))
-        
+
         return retw
+
+    def totalError(self):
+        error=0
+        for i in range(len(self.X0_train)):
+            ss=-self.Y_train[i]
+            j=0
+            for k in self.terms:
+               ss+=self.w[j]*(pow(1,k[0])*pow(self.X0_train[i],k[1])*pow(self.X1_train[i],k[2]))
+               j+=1
+            error+=ss**2
+        return error/2
 
 
     def trainModel(self):
-        for j in range(20):
+        for j in range(50):
             retw=self.sumOfError()
-            print(j)
             for i in range(len(self.w)):
                 self.w[i]=self.w[i]-(self.alpha*retw[i])
-            
-            
+            print("Error = ",self.totalError())
+
+
     def getPredictedValues(self):
         Y_pred=[]
         for i in range(len(self.X0_test)):
@@ -75,8 +86,8 @@ class PolyGradientDescent:
                 ans+=(self.w[j])*(pow(1,k[0])*pow(self.X0_test[i],k[1])*pow(self.X1_test[i],k[2]))
             Y_pred.append(ans)
         return Y_pred
-    
-    
+
+
     def poly_features(self):
         n=self.degree
         cnt = 0
@@ -89,13 +100,19 @@ class PolyGradientDescent:
                     self.w.append(0)
 
 
+def plot(x,y,Title):
+    plt.xlabel('alpha')
+    plt.ylabel('rmse')
+    plt.title(Title)
+    plt.show()
+
 if __name__ == '__main__':
-    gd=PolyGradientDescent(2)
+    gd=PolyGradientDescent(6)
     gd.poly_features()
-    print(gd.terms)
     gd.trainModel()
+    print()
     Y_test=list(gd.Y_test)
     Y_pred=gd.getPredictedValues()
     print("Parameters found by Gradient Descent are: \n", gd.w)
     print("\nRMSE Error: ", RMSE().rmse(Y_pred, Y_test))
-    #print("R-square Score: ", r2_score(Y_pred, Y_test))
+    print("R-square Score: ", r2_score(Y_pred, Y_test))

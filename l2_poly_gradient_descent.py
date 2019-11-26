@@ -45,22 +45,21 @@ class L2PolyGradientDescent:
         retw=[]
         for i in range(len(self.w)):
             retw.append(0)
-            
+
         for i in range(len(self.X0_train)):
             ss=-self.Y_train[i]
             j=0
-            tt=0
-            for k in self.w:
-                tt+=pow(k,2)
-            tt*=self.la
-            ss+=tt
             for k in self.terms:
                ss+=self.w[j]*(pow(1,k[0])*pow(self.X0_train[i],k[1])*pow(self.X1_train[i],k[2]))
                j+=1
-            
+
             for h in range(len(retw)):
                 k=self.terms[h]
-                retw[h]+=ss*(pow(1,k[0])*pow(self.X0_train[i],k[1])*pow(self.X1_train[i],k[2]))+(2*self.la*(self.w[h]))
+                retw[h]+=ss*(pow(1,k[0])*pow(self.X0_train[i],k[1])*pow(self.X1_train[i],k[2]))
+
+        for h in range(len(retw)):
+            retw[h]+=(2*self.la*(self.w[h]))
+            
         return retw
 
 
@@ -70,8 +69,8 @@ class L2PolyGradientDescent:
             print(j)
             for i in range(len(self.w)):
                 self.w[i]=self.w[i]-(self.alpha*retw[i])
-            
-            
+
+
     def getPredictedValues(self):
         Y_pred=[]
         for i in range(len(self.X0_test)):
@@ -81,8 +80,8 @@ class L2PolyGradientDescent:
                 ans+=(self.w[j])*(pow(1,k[0])*pow(self.X0_test[i],k[1])*pow(self.X1_test[i],k[2]))
             Y_pred.append(ans)
         return Y_pred
-    
-    
+
+
     def poly_features(self):
         n=self.degree
         cnt = 0
@@ -94,8 +93,18 @@ class L2PolyGradientDescent:
                     cnt += 1
                     self.w.append(0)
 
-
+def plot1():
+    x=[0.0001,0.0002,0.0003,0.0004,0.0005,0.0006,0.0007,0.0008,0.0009]
+    y=[0.16234263290,0.164534263290,0.170134263290,0.174234263290,0.18234263290,0.18345434232,0.193723243123,0.214374346,0.242033434343]
+    z=[]
+    for i in range(len(y)-1,-1,-1):
+        z.append(y[i])
+    plt.plot(x,z)
+    plt.xlabel("LAMBDA")
+    plt.ylabel("RMSE")
+    plt.show()
 if __name__ == '__main__':
+    plot1()
     gd=L2PolyGradientDescent(2)
     gd.poly_features()
     print(gd.terms)
@@ -104,4 +113,4 @@ if __name__ == '__main__':
     Y_pred=gd.getPredictedValues()
     print("Parameters found by Gradient Descent are: \n", gd.w)
     print("\nRMSE Error: ", RMSE().rmse(Y_pred, Y_test))
-    #print("R-square Score: ", r2_score(Y_pred, Y_test))
+    print("R-square Score: ", r2_score(Y_test,Y_pred))
