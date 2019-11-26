@@ -103,3 +103,4 @@ if __name__ == '__main__':
     Y_pred=gd.getPredictedValues()
     print("Parameters found by Gradient Descent are: \n", gd.w)
     print("\nRMSE Error: ", RMSE().rmse(Y_pred, Y_test))
+    print("R2 Score : ",R2_SCORE().r2_score(Y_test,Y_pred))
