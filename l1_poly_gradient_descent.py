@@ -13,10 +13,9 @@ Created on Mon Nov  4 21:33:00 2019
 """
 import numpy as np
 import pandas as pd
-from rmse import RMSE
+from rmse import RMSE,R2_SCORE
 from dataplot import DataPlot
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 
 
@@ -27,7 +26,7 @@ class L1PolyGradientDescent:
         X = self.dataset.iloc[:, 2:4].values
         #X = self.dataset.iloc[:, 3].values
         Y = self.dataset.iloc[:, 4].values
-        self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(X, Y, test_size=0.3, random_state=9)
+        self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(X, Y, test_size=0.3, random_state=9,shuffle=True)
         self.X0_train=list(self.X_train[:,0])
         self.X1_train=list(self.X_train[:,1])
         self.X0_test=list(self.X_test[:,0])
@@ -37,7 +36,8 @@ class L1PolyGradientDescent:
         self.w=[]
         self.terms=[]
         self.degree=degree
-        self.alpha=0.000003
+        self.alph=[0,0.00000425,0.000003,0.000003,0.000003,0.000002,0.000002]
+        self.alpha=self.alph[self.degree]
         self.la=0.001
 
 
@@ -58,7 +58,7 @@ class L1PolyGradientDescent:
                 retw[h]+=ss*(pow(1,k[0])*pow(self.X0_train[i],k[1])*pow(self.X1_train[i],k[2]))
         for h in range(len(retw)):
             retw[h]+=(self.la*np.sign(self.w[h]))
-            
+
         return retw
 
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         Y_pred=gd.getPredictedValues()
         print("Parameters found by Gradient Descent are: \n", gd.w)
         print("\nRMSE Error: ", RMSE().rmse(Y_pred, Y_test))
-        y.append(RMSE().rmse(Y_pred, Y_test))
+        y.append(RMSE().R2_SCORE().rmse(Y_pred, Y_test))
         lam+=0.001
     plt.plot(x,y)
     plt.xlabel("Lambda")

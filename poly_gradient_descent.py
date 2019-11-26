@@ -13,10 +13,9 @@ Created on Mon Nov  4 21:33:00 2019
 """
 import numpy as np
 import pandas as pd
-from rmse import RMSE
+from rmse import RMSE,R2_SCORE
 from dataplot import DataPlot
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score
 import matplotlib.pyplot as plt
 
 
@@ -27,7 +26,7 @@ class PolyGradientDescent:
         X = self.dataset.iloc[:, 2:4].values
         #X = self.dataset.iloc[:, 3].values
         Y = self.dataset.iloc[:, 4].values
-        self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(X, Y, test_size=0.3, random_state=9)
+        self.X_train, self.X_test, self.Y_train, self.Y_test = train_test_split(X, Y, test_size=0.3, random_state=9,shuffle=True)
         self.X0_train=list(self.X_train[:,0])
         self.X1_train=list(self.X_train[:,1])
         self.X0_test=list(self.X_test[:,0])
@@ -37,7 +36,8 @@ class PolyGradientDescent:
         self.w=[]
         self.terms=[]
         self.degree=degree
-        self.alpha=0.000003
+        self.alph=[0,0.00000425,0.000003,0.000003,0.000003,0.000002,0.000002]
+        self.alpha=self.alph[self.degree]
 
 
     def sumOfError(self):
@@ -70,11 +70,11 @@ class PolyGradientDescent:
 
 
     def trainModel(self):
-        for j in range(50):
+        for j in range(15):
             retw=self.sumOfError()
             for i in range(len(self.w)):
                 self.w[i]=self.w[i]-(self.alpha*retw[i])
-            print("Error = ",self.totalError())
+            print(self.alpha,j,self.totalError())
 
 
     def getPredictedValues(self):
@@ -100,12 +100,6 @@ class PolyGradientDescent:
                     self.w.append(0)
 
 
-def plot(x,y,Title):
-    plt.xlabel('alpha')
-    plt.ylabel('rmse')
-    plt.title(Title)
-    plt.show()
-
 if __name__ == '__main__':
     gd=PolyGradientDescent(6)
     gd.poly_features()
@@ -115,4 +109,4 @@ if __name__ == '__main__':
     Y_pred=gd.getPredictedValues()
     print("Parameters found by Gradient Descent are: \n", gd.w)
     print("\nRMSE Error: ", RMSE().rmse(Y_pred, Y_test))
-    print("R-square Score: ", r2_score(Y_pred, Y_test))
+    print("R-square Score: ", R2_SCORE().r2_score(Y_pred, Y_test))
