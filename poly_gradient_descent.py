@@ -101,7 +101,7 @@ class PolyGradientDescent:
         Training the Gradient Descent Model for given dataset
         for 1000 epoch and stop training the model.
         '''
-        for j in range(50):
+        for j in range(5):
             retw=self.sumOfError()
             for i in range(len(self.w)):
                 self.w[i]=self.w[i]-(self.alpha*retw[i])
@@ -144,7 +144,7 @@ class PolyGradientDescent:
 
 
 if __name__ == '__main__':
-    gd=PolyGradientDescent(6)
+    gd=PolyGradientDescent(1)
     gd.poly_features()
     gd.trainModel()
     print()
@@ -155,4 +155,4 @@ if __name__ == '__main__':
 
     print("Parameters found by Gradient Descent are: \n", gd.w)
     print("\nRMSE Error: ", RMSE().rmse(Y_pred, Y_test))
-    print("R-square Score: ", R2_SCORE().r2_score(Y_pred, Y_test))
+    print("R-square Score: ", R2_SCORE().r2_score(Y_test, Y_pred))
